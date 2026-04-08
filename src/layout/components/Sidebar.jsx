@@ -43,11 +43,10 @@ const Sidebar = ({ user, closeDrawer }) => {
                 <Link
                   to={item.path}
                   onClick={closeDrawer}
-                  className={`flex items-center gap-4 py-3 px-4 rounded-xl transition-all ${
-                    location.pathname === item.path
+                  className={`flex items-center gap-4 py-3 px-4 rounded-xl transition-all ${location.pathname === item.path
                       ? "bg-primary text-primary-content shadow-lg"
                       : "hover:bg-base-200"
-                  }`}
+                    }`}
                 >
                   {item.icon ? <item.icon size={20} /> : null}
                   <span className="font-medium">{item.label}</span>
@@ -57,19 +56,6 @@ const Sidebar = ({ user, closeDrawer }) => {
         </ul>
 
         <div className="border-t border-base-300 pt-6 mt-6">
-          <div className="flex items-center gap-3 px-4 mb-6">
-            <div className="avatar placeholder">
-              <div className="bg-neutral text-neutral-content rounded-full w-10">
-                <span className="font-bold text-sm">
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            </div>
-            <div>
-              <p className="text-sm font-bold leading-none">{displayName}</p>
-              <p className="text-xs opacity-50 mt-1">{role}</p>
-            </div>
-          </div>
           <button
             onClick={handleLogout}
             className="btn btn-outline btn-error btn-block gap-2 border-none"

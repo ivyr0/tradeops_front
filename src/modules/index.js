@@ -8,3 +8,4 @@ export { default as AuditLogsPage } from "./audit/pages/AuditLogsPage.jsx";
 export { default as ProfilePage } from "./profile/pages/ProfilePage.jsx";
 export { default as CreateProductPage } from "./catalog/pages/CreateProductPage.jsx";
 export { default as EditProductPage } from "./catalog/pages/EditProductPage.jsx";
+export { default as ChangePasswordPage } from "./profile/pages/ChangePasswordPage.jsx";

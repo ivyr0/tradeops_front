@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { fetchInventory, adjustStock } from "../api/inventory";
+import { fetchProducts } from "../../catalog/api/catalog";
 import { getErrorMessage } from "../../../api/error";
 
 const InventoryPage = () => {
@@ -18,6 +19,14 @@ const InventoryPage = () => {
   } = useQuery({
     queryKey: ["admin", "inventory"],
     queryFn: fetchInventory,
+  });
+
+  const {
+    data: catalogProducts = [],
+    isLoading: catalogLoading,
+  } = useQuery({
+    queryKey: ["admin", "products", "all"],
+    queryFn: () => fetchProducts({ size: 1000 }),
   });
 
   const adjustMutation = useMutation({
@@ -82,15 +91,11 @@ const InventoryPage = () => {
               onChange={(e) => setSelectedId(e.target.value || null)}
             >
               <option value="">Select item</option>
-              {rows.map((row) => {
-                const id = row.productId || row.id;
-                const name = row.productName || row.product_name || `Product #${id}`;
-                return (
-                  <option key={id} value={id}>
-                    {row.sku ? `${row.sku} - ` : ""}{name} (available: {row.available})
-                  </option>
-                );
-              })}
+              {catalogProducts.map((prod) => (
+                <option key={prod.id} value={prod.id}>
+                  {prod.name} (ID: {prod.id})
+                </option>
+              ))}
             </select>
             <input
               className="input input-bordered w-full md:w-40"
@@ -126,17 +131,22 @@ const InventoryPage = () => {
             <tbody>
               {rows.map((row, idx) => {
                 const id = row.productId || row.id || idx;
-                const name = row.productName || row.product_name;
-                const qtyOnHand = row.qtyOnHand !== undefined ? row.qtyOnHand : row.qty_on_hand;
-                const qtyReserved = row.qtyReserved !== undefined ? row.qtyReserved : row.qty_reserved;
+                const catalogProduct = catalogProducts.find(p => p.id === id);
+
+                const name = catalogProduct?.name || row.productName || row.product_name || `Product #${id}`;
+                const sku = catalogProduct?.sku || row.sku || "-";
+
+                const qtyOnHand = row.qtyOnHand !== undefined ? row.qtyOnHand : (row.qty_on_hand || 0);
+                const qtyReserved = row.qtyReserved !== undefined ? row.qtyReserved : (row.qty_reserved || 0);
+                const available = row.available !== undefined ? row.available : (qtyOnHand - qtyReserved);
 
                 return (
                   <tr key={id}>
-                    <td>{row.sku}</td>
+                    <td>{sku}</td>
                     <td>{name}</td>
                     <td>{qtyOnHand}</td>
                     <td>{qtyReserved}</td>
-                    <td>{row.available}</td>
+                    <td>{available}</td>
                   </tr>
                 );
               })}

@@ -10,8 +10,7 @@ export async function fetchInventory(params = {}) {
 export async function adjustStock(productId, qtyOnHand) {
   const res = await api.patch(
     `/admin/inventory/products/${productId}`,
-    null,
-    { params: { qtyOnHand } },
+    { qtyOnHand }
   );
   return res.data;
 }

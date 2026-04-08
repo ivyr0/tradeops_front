@@ -10,7 +10,8 @@ import {
   fetchProducts,
   toggleProductActive,
   deleteProduct,
-  deleteCategory
+  deleteCategory,
+  updateCategory
 } from "../api/catalog";
 
 const CatalogPage = () => {
@@ -20,6 +21,7 @@ const CatalogPage = () => {
   const [categorySearch, setCategorySearch] = useState("");
   const [productToDelete, setProductToDelete] = useState(null);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const categoriesQuery = useQuery({
     queryKey: ["admin", "categories"],
@@ -39,6 +41,17 @@ const CatalogPage = () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
     },
     onError: (e) => toast.error(getErrorMessage(e, "Failed to create category")),
+  });
+
+  const updateCategoryMutation = useMutation({
+    mutationFn: ({ id, payload }) => updateCategory(id, payload),
+    onSuccess: () => {
+      toast.success("Category updated");
+      setEditingCategory(null);
+      setCategoryForm({ name: "" });
+      queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
+    },
+    onError: (e) => toast.error(getErrorMessage(e, "Failed to update category")),
   });
 
   const toggleActiveMutation = useMutation({
@@ -84,7 +97,11 @@ const CatalogPage = () => {
 
   const handleCategorySubmit = (e) => {
     e.preventDefault();
-    createCategoryMutation.mutate(categoryForm);
+    if (editingCategory) {
+      updateCategoryMutation.mutate({ id: editingCategory.categoryId || editingCategory.id, payload: categoryForm });
+    } else {
+      createCategoryMutation.mutate(categoryForm);
+    }
   };
 
   const confirmDelete = (id) => {
@@ -115,7 +132,7 @@ const CatalogPage = () => {
         <div className="card bg-base-100 shadow-sm border border-base-200">
           <div className="card-body border rounded-lg">
             <h2 className="card-title text-sm uppercase tracking-widest opacity-60">
-              New Category
+              {editingCategory ? "Edit Category" : "New Category"}
             </h2>
             <form onSubmit={handleCategorySubmit} className="flex gap-2">
               <input
@@ -126,11 +143,24 @@ const CatalogPage = () => {
                 required
               />
               <button
+                type="submit"
                 className="btn btn-primary"
-                disabled={createCategoryMutation.isPending}
+                disabled={createCategoryMutation.isPending || (updateCategoryMutation && updateCategoryMutation.isPending)}
               >
-                Add
+                {editingCategory ? "Update" : "Add"}
               </button>
+              {editingCategory && (
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setEditingCategory(null);
+                    setCategoryForm({ name: "" });
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
             </form>
 
             <div className="mt-4">
@@ -160,6 +190,16 @@ const CatalogPage = () => {
                       </td>
                       <td className="font-medium">{c.name}</td>
                       <td className="text-right border-b border-base-200">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm text-primary"
+                          onClick={() => {
+                            setEditingCategory(c);
+                            setCategoryForm({ name: c.name });
+                          }}
+                        >
+                          Edit
+                        </button>
                         <button
                           type="button"
                           className="btn btn-ghost btn-sm text-error"

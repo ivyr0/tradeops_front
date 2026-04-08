@@ -42,6 +42,7 @@ export async function fetchProducts(params = {}) {
     category_id: row.categoryId || row.category_id,
     price: row.basePrice || row.price || 0,
     active: row.isActive,
+    sku: row.sku || `SKU-${row.productId || row.id}`,
   }));
 }
 
@@ -119,5 +120,12 @@ export async function deleteProduct(productId) {
 
 export async function deleteCategory(categoryId) {
   const res = await api.delete(`/admin/catalog/categories/${categoryId}`);
+  return res.data;
+}
+
+export async function updateCategory(categoryId, payload) {
+  const res = await api.put(`/admin/catalog/categories/${categoryId}`, {
+    name: payload.name,
+  });
   return res.data;
 }

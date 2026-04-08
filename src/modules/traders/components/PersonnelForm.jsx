@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTraderActions } from "../hooks/useTradersActions";
 
-const PersonnelForm = ({ traders=[], isLoading }) => {
+const PersonnelForm = ({ traders = [], isLoading }) => {
   const { createPersonnel, isCreatingPersonnel } = useTraderActions();
 
   const [traderId, setTraderId] = useState("");
@@ -82,12 +82,7 @@ const PersonnelForm = ({ traders=[], isLoading }) => {
           >
             <option value="ROLE_TRADER_ADMIN">ROLE_TRADER_ADMIN</option>
             <option value="ROLE_TRADER_STAFF">ROLE_TRADER_STAFF</option>
-            <option value="ROLE_SUPER_ADMIN">ROLE_SUPER_ADMIN</option>
-            <option value="ROLE_MODERATOR">ROLE_MODERATOR</option>
-            <option value="ROLE_DEVOPS_SYSADMIN">ROLE_DEVOPS_SYSADMIN</option>
-            <option value="ROLE_CATALOG_MANAGER">ROLE_CATALOG_MANAGER</option>
             <option value="ROLE_WAREHOUSE_OPS">ROLE_WAREHOUSE_OPS</option>
-            <option value="ROLE_COURIER">ROLE_COURIER</option>
           </select>
 
           <button

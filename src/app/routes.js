@@ -20,6 +20,7 @@ import {
   ProfilePage,
   CreateProductPage,
   EditProductPage,
+  ChangePasswordPage,
 } from "../modules";
 
 export const appRoutes = [
@@ -96,6 +97,12 @@ export const appRoutes = [
     icon: User,
     roles: ["ROLE_SUPER_ADMIN", "ROLE_MANAGER", "ROLE_MODERATOR"],
     component: ProfilePage,
+  },
+  {
+    path: "/profile/change-password",
+    roles: ["ROLE_SUPER_ADMIN", "ROLE_MANAGER", "ROLE_MODERATOR"],
+    component: ChangePasswordPage,
+    hidden: true,
   },
 ];
 
