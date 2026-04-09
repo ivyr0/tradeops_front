@@ -21,8 +21,24 @@ function getTradersBasePath() {
   return isModerator(role) ? "/admin/traders" : "/superadmin/traders";
 }
 
+function getOrdersBasePath() {
+
+  const role = getCurrentRole();
+  return isModerator(role) ? "/admin/orders" : "/superadmin/orders";
+}
+
+export async function fetchTradersCount() {
+  const res = await api.get(`${getTradersBasePath()}/count`);
+  return res.data?.count || 0;
+}
+
+export async function fetchOrdersCount() {
+  const res = await api.get(`${getOrdersBasePath()}/count`);
+  return res.data?.count || 0;
+}
+
 export async function fetchTraders(params = {}) {
-  const res = await api.get(getTradersBasePath(), { 
+  const res = await api.get(getTradersBasePath(), {
     params: {
       page: 0,
       size: 50,
